@@ -18,20 +18,12 @@ var ArticleSchema = new Schema({
     type: String
   },
   date: {
-      type: Date
-  },
-  numComments: {
-    type: Integer,
-    default: 0
+      type: String
   },
   comments: [{
     type: Schema.Types.ObjectId,
     ref: "Comment"
   }],
-  numLikes: {
-    type: Integer,
-    default: 0
-  },
   likes: [{
     type: Schema.Types.ObjectId,
     ref: "Like"

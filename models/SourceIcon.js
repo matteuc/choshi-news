@@ -15,8 +15,11 @@ var SourceIconSchema = new Schema({
         default: "#ffffff"
     },
     icon: {
+        type: String
+    },
+    fIcon: {
         type: String,
-        required: true
+        default: "fas fa-newspaper"
     },
     route: {
         type: String

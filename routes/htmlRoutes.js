@@ -20,11 +20,8 @@ module.exports = function (app) {
 
   app.get("/login", function(req, res) {
     if (req.session.passport) {
-      var user = req.session.passport.user.profile._json;
-      var config = {
-        user: user
-      };
-      res.render("home", config);
+     
+      res.redirect("/");
     }
     else {
       // Redirect to Login Page
