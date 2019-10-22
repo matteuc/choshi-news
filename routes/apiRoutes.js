@@ -1,12 +1,14 @@
 var db = require("../models");
+var async = require("async");
 
 module.exports = function (app) {
-    // TODO: Retrieving articles from the specific source in the database
-    app.get("/api/articles/:source/:page", function (req, res) {
-        var source = req.params.source
-        var page = req.params.page
-        db.Source.findOne({
-            name: source
+    // Retrieving articles from the specific source in the database
+    app.get("/api/articles/:sourceID/:pageID", function (req, res) {
+        var sourceID = req.params.sourceID
+        var pageID = req.params.pageID
+        db.SourcePage.findOne({
+            _id: pageID,
+            source: sourceID
         }).populate("articles").select("articles - _id").then(function (schema) {
             if (schema) {
                 res.json(schema.articles)
@@ -18,41 +20,111 @@ module.exports = function (app) {
         });
     });
 
-    // TODO: Scraping articles from the source's page
-    app.get("/api/scrape/:source/:page", function (req, res) {
-        var source = req.params.source
-        var page = req.params.page
+    // Scraping articles from the source's page
+    app.get("/api/scrape/:sourceID/:pageID", function (req, res) {
+        var sourceID = req.params.sourceID
+        var pageID = req.params.pageID
 
         var articles = [];
         // RETRIEVE SOURCE STRUCTURE 
-        db.Source.findOne({
-            name: source
-        }).select("structure - _id")
-        // SCRAPE
-        .then(function(sourceObj){
-            var structure = sourceObj.structure;
-            var pageURL;
+        db.SourcePage.findOne({
+            _id: pageID,
+            source: sourceID
+        }).populate("source")
+            // SCRAPE
+            .then(function (sourcePageObj) {
+                var structure = sourcePageObj.source.structure;
+                var pageURL = sourcePageObj.url;
 
-            axios.get(pageURL).then(function(response) {
-                // Then, we load that into cheerio and save it to $ for a shorthand selector
-                var $ = cheerio.load(response.data);
-            
-                // Now, we grab every h2 within an article tag, and do the following:
-                $(structure.container).each(function(i, element) {
-                  
+                axios.get(pageURL).then(function (response) {
+                    // Then, we load that into cheerio and save it to $ for a shorthand selector
+                    var $ = cheerio.load(response.data);
+
+                    // Now, we grab every h2 within an article tag, and do the following:
+                    $(structure.container).each(function (i, element) {
+                        var article = {};
+
+                        // Retrieve URL
+                        var url = $(element).find(structure.url).attr("href");
+                        article.url = url;
+
+                        // Retrieve remaining article information
+                        var articleInfoKeys = ["title", "description", "author", "timestamp", "image"];
+
+                        for (key of articleInfoKeys) {
+                            if (structure[key].container) {
+                                var value;
+                                var valueContainer = $(element).find(structure[key].container);
+
+                                if (structure[key].text) {
+                                    value = valueContainer.text();
+                                } else if (structure[key].attr.length != 0) {
+                                    value = valueContainer.attr(structure[key].attr);
+                                } else {
+                                    value = "";
+                                }
+
+                                article[key] = value;
+                            }
+                        }
+
+                        articles.push(article);
+                    });
+
+                    createArticles(articles);
                 });
-            
-                
-              });
-        })
-        // INSERT INTO DATABASE (IF IT DOESN'T ALREADY EXIST)
-        .then(function(){
-            // First create articles
-           
+            })
 
-            // and then into Source (i.e. using insertedIds)
-            // https://docs.mongodb.com/manual/reference/method/db.collection.insertMany/
-        });
+        // INSERT INTO DATABASE (IF IT DOESN'T ALREADY EXIST)
+        function createArticles(articles) {
+            // First create articles
+            var articleIDs = [];
+            async.each(articles, function (article, callback) {
+                db.Article.findOneAndUpdate({
+                    url: article.url
+                },
+                    article,
+                    {
+                        upsert: true,
+                        new: true
+                    }).then(function (newArticle) {
+                        var id = newArticle._id;
+                        articleIDs.push(id);
+                        return callback();
+                    })
+            },
+                function (err) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    else {
+                        // Once for loop is completed
+                        addArticles(articleIDs);
+                    }
+                }
+            );
+
+        }
+
+        function addArticles(articleIDs) {
+            // Add articles into SourcePage 
+            db.SourcePage.findOneAndUpdate(
+                {
+                    _id: pageID,
+                    source: sourceID
+                },
+                {
+                    $addToSet: {
+                        articles:
+                        {
+                            $each: articleIDs
+                        }
+                    }
+                },
+                {
+                    new: true
+                })
+        }
 
     });
 

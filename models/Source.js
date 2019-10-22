@@ -67,14 +67,8 @@ var SourceSchema = new Schema({
         },
     },
     pages: [{
-        name: {
-            type: String,
-            required: true
-        },
-        url: {
-            type: String,
-            required: true
-        }
+        type: Schema.Types.ObjectId,
+        ref: "SourcePage"
     }],
     structure: {
         container: {
@@ -149,12 +143,9 @@ var SourceSchema = new Schema({
                 default: "src"
             }
         }
-    },
+    }
     // https://docs.mongodb.com/manual/reference/operator/projection/slice/ (RETURNING A SPECIFIC # OF RESULTS)
-    articles: [{
-        type: Schema.Types.ObjectId,
-        ref: "Article"
-    }]
+   
 
 });
 
