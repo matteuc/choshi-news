@@ -1,5 +1,5 @@
 var db = require("../models");
-var async = require("async");
+var CronJob = require("cron").CronJob;
 
 module.exports = function (app) {
     // Retrieving articles from the specific source in the database
@@ -79,30 +79,16 @@ module.exports = function (app) {
         function createArticles(articles) {
             // First create articles
             var articleIDs = [];
-            async.each(articles, function (article, callback) {
-                db.Article.findOneAndUpdate({
-                    url: article.url
-                },
-                    article,
-                    {
-                        upsert: true,
-                        new: true
-                    }).then(function (newArticle) {
-                        var id = newArticle._id;
-                        articleIDs.push(id);
-                        return callback();
-                    })
-            },
-                function (err) {
-                    if (err) {
-                        console.log(err);
-                    }
-                    else {
-                        // Once for loop is completed
-                        addArticles(articleIDs);
-                    }
-                }
-            );
+            var bulk = db.Article.collection.initializeUnorderedBulkOp();
+            articles.forEach(function (article) {
+                bulk.find(article).upsert();
+            });
+
+            bulk.execute(function (err, bulkRes) {
+                if (err) res.json(err);
+                articleIDs = bulkRes.getUpsertedIds();
+                addArticles(articleIDs);
+            })
 
         }
 
@@ -133,9 +119,9 @@ module.exports = function (app) {
         var id = req.params.id;
         db.Article.findOne({
             _id: id
-        }).populate("likes").select("likes - _id").then(function (schema) {
-            if (schema) {
-                res.json(schema.likes)
+        }).populate("likes").select("likes - _id").then(function (data) {
+            if (data) {
+                res.json(data.likes)
             } else {
                 res.json({});
             }
@@ -152,9 +138,9 @@ module.exports = function (app) {
 
         db.Article.findOne({
             _id: id
-        }).populate("comments").select("comments - _id").then(function (schema) {
-            if (schema) {
-                res.json(schema.comments)
+        }).populate("comments").select("comments - _id").then(function (data) {
+            if (data) {
+                res.json(data.comments)
             } else {
                 res.json({});
             }
@@ -174,9 +160,9 @@ module.exports = function (app) {
         if (req.session.passport && (userToken == pathToken)) {
             db.User.findOne({
                 token: userToken
-            }).populate("favorites").select("favorites - _id").then(function (schema) {
-                if (schema) {
-                    res.json(schema.favorites)
+            }).populate("favorites").select("favorites - _id").then(function (data) {
+                if (data) {
+                    res.json(data.favorites)
                 } else {
                     res.json({});
                 }
@@ -304,6 +290,10 @@ module.exports = function (app) {
                 .then(function () {
                     // ... then from article
                     db.Article.findOneAndUpdate({ _id: articleID }, { $pull: { comments: commentID } })
+                    .then(function (updatedC) {
+
+                        res.json(updatedC);
+                    });
                 })
                 .catch(function (err) {
                     // If an error occurred, send it to the client
@@ -334,6 +324,10 @@ module.exports = function (app) {
                 .then(function () {
                     // ... then from article
                     db.Article.findOneAndUpdate({ _id: articleID }, { $pull: { likes: likeID } })
+                    .then(function (updatedL) {
+
+                        res.json(updatedL);
+                    });
                 })
                 .catch(function (err) {
                     // If an error occurred, send it to the client
@@ -374,6 +368,21 @@ module.exports = function (app) {
 
     });
 
-    // API REQUEST THAT DELETE ARTICLES FROM THE DATABASE THAT ARE OLDER THAN 30 DAYS
+    function refreshAll() {
 
+    }
+
+    function deleteOldArticles(days) {
+
+    }
+
+
+    // API REQUEST THAT SCRAPES AND DELETES ARTICLES FROM THE DATABASE 
+    // THAT ARE OLDER THAN 15 DAYS EVERY THREE HOURS
+
+    // Once on Heroku, use Heroku Scheduler
+    var updateFeed = new CronJob("0 0 */3 * * *", function () {
+        refreshAll();
+        deleteOldArticles(15);
+    }, function () { }, true)
 }
