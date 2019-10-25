@@ -2,6 +2,9 @@ var db = require("../models");
 var CronJob = require("cron").CronJob;
 
 module.exports = function (app) {
+    // Create Source Documents
+
+
     // Retrieving articles from the specific source in the database
     app.get("/api/articles/:sourceID/:pageID", function (req, res) {
         var sourceID = req.params.sourceID

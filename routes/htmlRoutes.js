@@ -20,12 +20,11 @@ module.exports = function (app) {
 
   app.get("/login", function(req, res) {
     if (req.session.passport) {
-     
       res.redirect("/");
     }
     else {
       // Redirect to Login Page
-      res.render("login", { layout: "main-guest" });
+      res.render("landing", { layout: "main-guest" });
 
     }
   })
