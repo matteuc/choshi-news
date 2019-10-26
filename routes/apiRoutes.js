@@ -67,43 +67,43 @@ module.exports = function (app) {
         }).populate("source")
             // SCRAPE
             .then(function (sourcePageObj) {
-                var structure = sourcePageObj.source.structure;
+                var structures = sourcePageObj.source.structure;
+
                 pageURL = sourcePageObj.url;
 
                 axios.get(pageURL).then(function (response) {
-                    // Then, we load that into cheerio and save it to $ for a shorthand selector
                     var $ = cheerio.load(response.data);
-
-                    // Now, we grab every h2 within an article tag, and do the following:
-                    $(structure.container).each(function (i, element) {
-                        var article = {};
-
-                        // Retrieve URL
-                        var url = $(element).find(structure.url).attr("href");
-                        article.url = url;
-
-                        // Retrieve remaining article information
-                        var articleInfoKeys = ["title", "description", "author", "timestamp", "image"];
-
-                        for (key of articleInfoKeys) {
-                            if (structure[key].container) {
-                                var value;
-                                var valueContainer = $(element).find(structure[key].container);
-
-                                if (structure[key].text) {
-                                    value = valueContainer.text();
-                                } else if (structure[key].attr.length != 0) {
-                                    value = valueContainer.attr(structure[key].attr);
-                                } else {
-                                    value = "";
+                    structures.forEach(function(structure){
+                        $(structure.container).each(function (i, element) {
+                            var article = {};
+    
+                            // Retrieve URL
+                            var url = $(element).find(structure.url).attr("href");
+                            article.url = url;
+    
+                            // Retrieve remaining article information
+                            var articleInfoKeys = ["title", "description", "author", "timestamp", "image"];
+    
+                            for (key of articleInfoKeys) {
+                                if (structure[key].container) {
+                                    var value;
+                                    var valueContainer = $(element).find(structure[key].container);
+    
+                                    if (structure[key].text) {
+                                        value = valueContainer.text();
+                                    } else if (structure[key].attr.length != 0) {
+                                        value = valueContainer.attr(structure[key].attr);
+                                    } else {
+                                        value = "";
+                                    }
+    
+                                    article[key] = value;
                                 }
-
-                                article[key] = value;
                             }
-                        }
-
-                        articles.push(article);
-                    });
+    
+                            articles.push(article);
+                        });
+                    })
 
                     createArticles(articles);
                 });
@@ -221,7 +221,7 @@ module.exports = function (app) {
     });
 
     // Retrieve all like and favorite IDS for a certain user
-    app.get("/api/profile/:userID", function(req, res){
+    app.get("/api/profile/:userID", function (req, res) {
         var response = {
             error: ""
         };
@@ -232,17 +232,17 @@ module.exports = function (app) {
             db.User.findOne({
                 token: userToken
             })
-            .populate("likes")
-            .select("favorites + likes")
-            .then(function (data) {
-                if (data) {
-                    res.json(data);
-                } else {
-                    res.json({});
-                }
-            }).catch(function (err) {
-                res.json(err);
-            });
+                .populate("likes")
+                .select("favorites + likes")
+                .then(function (data) {
+                    if (data) {
+                        res.json(data);
+                    } else {
+                        res.json({});
+                    }
+                }).catch(function (err) {
+                    res.json(err);
+                });
         }
         else {
             response.error = `Access to ${pathToken}'s likes and favorites is not permitted.`;

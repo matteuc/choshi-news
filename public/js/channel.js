@@ -115,7 +115,7 @@ $(document).ready(function () {
                     btn.removeClass("fas");
                     text.text(`${num - 1} upvotes`);
                     text.attr("data-likes", num - 1)
-                    btnDiv.attr("data-saved", "false");
+                    btnDiv.attr("data-liked", "false");
 
                 }
             })
@@ -168,6 +168,6 @@ $(document).ready(function () {
 
 
     // Load the first page option
-    loadArticles(() => { });
+    $("#sync-articles-btn").click();
 })
 

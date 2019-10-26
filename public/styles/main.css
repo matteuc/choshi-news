@@ -32,14 +32,28 @@
     right: 5%;
 }
 
+#bookmark-btn-container {
+    position: absolute;
+    left: 60px;
+}
+
 .action-btn {
     margin: 3px;
     font-size: 1.2em;
 }
 
-#login-btn, .action-btn {
+#login-btn, .action-btn, #view-saved-btn {
     margin-top: -5px;
     color: white;
+}
+
+#view-saved-btn {
+    margin: 3px;
+    color: white;
+}
+
+#view-saved-btn:hover {
+    color: rgb(250, 75, 75);
 }
 
 #login-btn:hover, .action-btn:hover {

@@ -80,7 +80,7 @@ module.exports = function (app) {
 
   });
 
-  app.get("/favorites/:userID", function (req, res) {
+  app.get("/saved", function (req, res) {
     // Render user favorites page only if the user is viewing their own page
     if (req.session.passport) {
       var user = req.session.passport.user.profile._json;
@@ -88,17 +88,19 @@ module.exports = function (app) {
         user: user
       };
       var userToken = user.sub;
-      var pathToken = req.params.userID;
 
-      if(userToken == pathToken) {
-        // Render favorites
-        res.render("favorites", config);
+      // Render favorites
+      db.User.findOne({
+        token: userToken
+      })
+      .populate("favorites")
+      .select("favorites")
+      .then(function(savedArticles){
+        res.render("saved", {
+          articles: savedArticles
+        });
 
-      } else {
-        // Current user is trying to access another user's favorites
-        config.foreignToken = pathToken;
-        res.render("no-favorites-access", config)
-      }
+      })
 
     }
     else {
