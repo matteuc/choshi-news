@@ -1,0 +1,117 @@
+body {
+    background-image: radial-gradient(rgb(216, 216, 216), rgb(255, 255, 255));
+    background-repeat: no-repeat;
+    background-size: cover;
+    }
+    
+    #user-header-img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        box-shadow:
+          inset 0 0 0 2px rgba(255,255,255,0.6), 
+          0 1px 1px rgba(0,0,0,0.1);
+        background-color: transparent !important;
+        /* z-index: 991; */
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        bottom: 20px;
+      }
+      
+      #user-header-img  img {
+        border-radius: inherit;
+        width: inherit;
+        height: inherit;
+        display: block;
+        /* position: relative; */
+        /* z-index: 990; */
+      }
+
+      
+  header.saved-masthead {
+    position: relative;
+    background-color: #343a40;
+    background: url("../media/images/home-bg.jpg") no-repeat center center;
+    background-size: cover;
+    padding-top: 8rem;
+    /* padding-bottom: 8rem; */
+}
+
+header.saved-masthead .overlay {
+  position: absolute;
+  background-color: #212529;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0.3;
+}
+
+header.saved-masthead h1 {
+  font-size: 2rem;
+  text-shadow: rgb(255, 255, 255) 1px 0 5px;
+
+}
+
+@media (min-width: 768px) {
+  header.saved-masthead {
+    padding-top: 12rem;
+    /* padding-bottom: 12rem; */
+  }
+  header.saved-masthead h1 {
+    font-size: 3rem;
+  }
+}
+
+.page-name {
+  color:rgb(61, 61, 61); 
+  text-shadow: rgb(167, 166, 166) 1px 0 5px;
+}
+
+#saved-articles {
+    margin-top: 150px;
+    height: 100vh;
+}
+
+.grow { 
+transition: all .2s ease-in-out;
+}
+.grow:hover { 
+transform: scale(1.05); 
+box-shadow: 5px 5px 10px #888888;
+}
+
+a.nostyle:link {
+text-decoration: inherit;
+color: inherit;
+cursor: auto;
+}
+
+a.nostyle:visited {
+text-decoration: inherit;
+color: inherit;
+cursor: auto;
+}
+
+.btn-col {
+border-right: 1px solid rgb(199, 199, 199);
+}
+
+.bookmark-btn i {
+color: rgb(250, 75, 75);
+}
+
+.like-btn i, .like-list-btn i {
+color: rgb(81, 214, 255);
+}
+
+.comment-btn i {
+color: rgb(100, 248, 100);
+}
+
+.article-card {
+border-left: 5px solid midnightblue;
+}

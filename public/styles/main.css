@@ -68,7 +68,7 @@
       inset 0 0 0 2px rgba(255,255,255,0.6), 
       0 1px 1px rgba(0,0,0,0.1);
     background-color: transparent !important;
-    z-index: 999;
+    z-index: 500;
   }
   
   .inset img {
@@ -77,7 +77,7 @@
     height: inherit;
     display: block;
     position: relative;
-    z-index: 998;
+    z-index: 499;
   }
 
   

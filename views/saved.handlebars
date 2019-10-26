@@ -1,0 +1,33 @@
+<link rel="stylesheet" href="../styles/saved.css">
+<script src="../js/saved.js"></script>
+
+<header class="saved-masthead text-white text-center">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 mx-auto">
+                <div id="user-header-img" class="m-auto">
+                    <img src="{{user.picture}}" data-link="/" alt="">
+                    <h3 class="page-name">Saved</h3>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</header>
+
+<div class="container mb-5" id="saved-articles">
+</div>
+
+
+<span id="user-img" data-url="{{user.picture}}"></span>
+<span id="user-token" data-token="{{user.sub}}"></span>
+
+
+<script>
+    var userImg = $("#user-img").attr("data-url");
+    loadProfilePic(userImg);
+</script>
+
+{{>channelOverlay}}
