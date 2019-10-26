@@ -1,25 +1,35 @@
 var db = require("../models");
 var CronJob = require("cron").CronJob;
+var axios = require("axios");
+var cheerio = require("cheerio");
+var mongoose = require("mongoose");
+
 
 module.exports = function (app) {
+    // Create Source Icons
+    // db.SourceIcon.create({
+    //     name: "Reddit",
+    //     iconPath: "./media/images/reddit-icon.png"
+    // });
+
     function titleCase(str) {
         var splitStr = str.toLowerCase().split(' ');
         for (var i = 0; i < splitStr.length; i++) {
-          // You do not need to check if i is larger than splitStr length, as your for does that for you
-          // Assign it back to the array
-          splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+            // You do not need to check if i is larger than splitStr length, as your for does that for you
+            // Assign it back to the array
+            splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
         }
         // Directly return the joined string
         return splitStr.join(' ');
-      }
+    }
 
-    // Create Source Documents
 
     // Get all channel icons
     app.get("/api/icons", function (req, res) {
-        db.SourceIcon.find({}).then(function(icons) {
-            let iconsArr = icons.map(function(icon){
+        db.SourceIcon.find({}).then(function (icons) {
+            let iconsArr = icons.map(function (icon) {
                 icon.name = titleCase(icon.name);
+                return icon;
             })
             res.json(iconsArr);
         })
@@ -32,7 +42,7 @@ module.exports = function (app) {
         db.SourcePage.findOne({
             _id: pageID,
             source: sourceID
-        }).populate("articles").select("articles - _id").then(function (schema) {
+        }).populate("articles").select("articles").then(function (schema) {
             if (schema) {
                 res.json(schema.articles)
             } else {
@@ -47,6 +57,7 @@ module.exports = function (app) {
     app.get("/api/scrape/:sourceID/:pageID", function (req, res) {
         var sourceID = req.params.sourceID
         var pageID = req.params.pageID
+        let pageURL;
 
         var articles = [];
         // RETRIEVE SOURCE STRUCTURE 
@@ -57,7 +68,7 @@ module.exports = function (app) {
             // SCRAPE
             .then(function (sourcePageObj) {
                 var structure = sourcePageObj.source.structure;
-                var pageURL = sourcePageObj.url;
+                pageURL = sourcePageObj.url;
 
                 axios.get(pageURL).then(function (response) {
                     // Then, we load that into cheerio and save it to $ for a shorthand selector
@@ -102,16 +113,23 @@ module.exports = function (app) {
         function createArticles(articles) {
             // First create articles
             var articleIDs = [];
-            var bulk = db.Article.collection.initializeUnorderedBulkOp();
+            var bulk = db.Article.collection.initializeOrderedBulkOp();
             articles.forEach(function (article) {
-                bulk.find(article).upsert();
+                // Correcting for sources that use relative links
+                if (article.title && article.url) {
+                    if (!article.url.includes("http")) {
+                        article.url = `${pageURL.split(".com")[0]}.com${article.url}`
+
+                    }
+                    bulk.find(article).upsert().updateOne(article);
+                }
             });
 
             bulk.execute(function (err, bulkRes) {
                 if (err) res.json(err);
                 articleIDs = bulkRes.getUpsertedIds();
                 addArticles(articleIDs);
-            })
+            });
 
         }
 
@@ -132,7 +150,7 @@ module.exports = function (app) {
                 },
                 {
                     new: true
-                }).then(function(){
+                }).then(function () {
                     // End call to scrape articles
                     res.json({});
                 })
@@ -145,7 +163,7 @@ module.exports = function (app) {
         var id = req.params.id;
         db.Article.findOne({
             _id: id
-        }).populate("likes").select("likes - _id").then(function (data) {
+        }).populate("likes").select("likes ").then(function (data) {
             if (data) {
                 res.json(data.likes)
             } else {
@@ -164,7 +182,7 @@ module.exports = function (app) {
 
         db.Article.findOne({
             _id: id
-        }).populate("comments").select("comments - _id").then(function (data) {
+        }).populate("comments").select("comments ").then(function (data) {
             if (data) {
                 res.json(data.comments)
             } else {
@@ -186,7 +204,7 @@ module.exports = function (app) {
         if (req.session.passport && (userToken == pathToken)) {
             db.User.findOne({
                 token: userToken
-            }).populate("favorites").select("favorites - _id").then(function (data) {
+            }).populate("favorites").select("favorites ").then(function (data) {
                 if (data) {
                     res.json(data.favorites)
                 } else {
@@ -201,6 +219,36 @@ module.exports = function (app) {
             res.json(response);
         }
     });
+
+    // Retrieve all like and favorite IDS for a certain user
+    app.get("/api/profile/:userID", function(req, res){
+        var response = {
+            error: ""
+        };
+        var user = req.session.passport.user.profile._json;
+        var userToken = user.sub;
+        var pathToken = req.params.userID;
+        if (req.session.passport && (userToken == pathToken)) {
+            db.User.findOne({
+                token: userToken
+            })
+            .populate("likes")
+            .select("favorites + likes")
+            .then(function (data) {
+                if (data) {
+                    res.json(data);
+                } else {
+                    res.json({});
+                }
+            }).catch(function (err) {
+                res.json(err);
+            });
+        }
+        else {
+            response.error = `Access to ${pathToken}'s likes and favorites is not permitted.`;
+            res.json(response);
+        }
+    })
 
     // Create a comment
     app.post("/api/articles/:articleID/comments", function (req, res) {
@@ -218,11 +266,11 @@ module.exports = function (app) {
             db.Comment.create(comment)
                 .then(function (newComment) {
                     // Add to article
-                    return db.Article.findOneAndUpdate({ _id: articleID }, { $push: { comments: newComment._id } }, { new: true });
+                    return db.Article.findOneAndUpdate({ _id: articleID }, { $push: { comments: mongoose.Types.ObjectId(newComment._id) } }, { new: true });
                 })
                 .then(function () {
                     // ... then to user
-                    return db.User.findOneAndUpdate({ token: userToken }, { $push: { comments: newComment._id } }, { new: true });
+                    return db.User.findOneAndUpdate({ token: userToken }, { $push: { comments: mongoose.Types.ObjectId(newComment._id) } }, { new: true });
                 })
                 .catch(function (err) {
                     // If an error occurred, send it to the client
@@ -239,7 +287,6 @@ module.exports = function (app) {
 
     // Create a like
     app.post("/api/articles/:articleID/likes", function (req, res) {
-        var like = JSON.parse(req.body.like);
         // Add to article and to user
 
         var articleID = req.params.articleID;
@@ -249,15 +296,25 @@ module.exports = function (app) {
         var user = req.session.passport.user.profile._json;
         var userToken = user.sub;
         var pathToken = req.body.userID;
+        var like = {
+            author: user.given_name,
+            authorPhoto: user.picture,
+            article: mongoose.Types.ObjectId(articleID)
+        };
         if (req.session.passport && (userToken == pathToken)) {
+            let like_id;
             db.Like.create(like)
                 .then(function (newLike) {
                     // Add to article
-                    return db.Article.findOneAndUpdate({ _id: articleID }, { $push: { likes: newLike._id } }, { new: true });
+                    like_id = newLike._id;
+                    return db.Article.findOneAndUpdate({ _id: articleID }, { $push: { likes: mongoose.Types.ObjectId(like_id) } }, { new: true });
                 })
                 .then(function () {
                     // ... then to user
-                    return db.User.findOneAndUpdate({ token: userToken }, { $push: { likes: newLike._id } }, { new: true });
+                    res.json({
+                        id: like_id
+                    });
+                    return db.User.findOneAndUpdate({ token: userToken }, { $push: { likes: mongoose.Types.ObjectId(like_id) } }, { new: true });
                 })
                 .catch(function (err) {
                     // If an error occurred, send it to the client
@@ -274,7 +331,7 @@ module.exports = function (app) {
 
     // Create a favorite
     app.post("/api/favorites/:userID", function (req, res) {
-        var articleID = req.params.articleID;
+        var articleID = req.body.articleID;
         var response = {
             error: ""
         };
@@ -282,7 +339,7 @@ module.exports = function (app) {
         var userToken = user.sub;
         var pathToken = req.params.userID;
         if (req.session.passport && (userToken == pathToken)) {
-            db.User.findOneAndUpdate({ token: userToken }, { $push: { favorites: articleID } }, { new: true })
+            db.User.findOneAndUpdate({ token: userToken }, { $push: { favorites: mongoose.Types.ObjectId(articleID) } }, { new: true })
                 .then(function (newFav) {
                     res.json(newFav);
                 })
@@ -316,10 +373,10 @@ module.exports = function (app) {
                 .then(function () {
                     // ... then from article
                     db.Article.findOneAndUpdate({ _id: articleID }, { $pull: { comments: commentID } })
-                    .then(function (updatedC) {
+                        .then(function (updatedC) {
 
-                        res.json(updatedC);
-                    });
+                            res.json(updatedC);
+                        });
                 })
                 .catch(function (err) {
                     // If an error occurred, send it to the client
@@ -349,11 +406,15 @@ module.exports = function (app) {
             db.User.findOneAndUpdate({ token: userToken }, { $pull: { likes: likeID } })
                 .then(function () {
                     // ... then from article
-                    db.Article.findOneAndUpdate({ _id: articleID }, { $pull: { likes: likeID } })
-                    .then(function (updatedL) {
-
-                        res.json(updatedL);
+                    return db.Article.findOneAndUpdate({ _id: articleID }, { $pull: { likes: likeID } })
+                })
+                .then(function (updatedL) {
+                    return db.Like.deleteOne({
+                        _id: likeID
                     });
+                })
+                .then(function () {
+                    res.json(updatedL);
                 })
                 .catch(function (err) {
                     // If an error occurred, send it to the client

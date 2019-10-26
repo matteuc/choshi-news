@@ -19,7 +19,7 @@ var SourceIconSchema = new Schema({
 });
 
 SourceIconSchema.methods.setRoute = function() {
-    this.route = `/channels/${name.toLowerCase()}`;
+    this.route = `/channels/${name.split(" ").join("-").toLowerCase()}`;
     // Return the new boolean value
     return this.route;
   };

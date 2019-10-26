@@ -1,0 +1,38 @@
+<div class="mb-3 row justify-content-center">
+    <div class="col-12 col-md-10 col-md-offset-1 colcol-lg-8 col-lg-offset-2 card article-card grow" data-id="{{_id}}">
+        <div class="card-body">
+            <a class="nostyle" href="{{url}}" target="_blank">
+                <h5 class="card-title">{{title}}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{author}}
+                    {{#if timestamp}}
+                    &nbsp;|&nbsp;{{timestamp}}
+                    {{/if}}
+                </h6>
+                <p class="card-text">{{description}}</p>
+            </a>
+            <hr>
+            <div class="mt-3 row text-center">
+                <div class="col-4 btn-col">
+                    <div class="like-btn" data-id="{{_id}}" data-liked="false" data-likeid="">
+                        <i class="far far fa-arrow-alt-circle-up" ></i>
+                        <p class="text-muted" data-likes="{{likes.length}}">{{likes.length}} upvotes</span>
+                    </div>
+                </div>
+                <div class="col-4 btn-col" data-id="{{_id}}">
+                    <div class="comment-btn">
+                        <i class="far fa-comment-alt"></i>
+                        <p class="text-muted" data-comments="{{comments.length}}">{{comments.length}} comments</p>
+                    </div>
+
+                </div>
+                <div class="col-4">
+                    <div class="bookmark-btn" data-id="{{_id}}" data-saved="false">
+                        <i class="far fa-bookmark"></i>
+                        <p class="text-muted">save</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

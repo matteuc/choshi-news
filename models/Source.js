@@ -22,50 +22,50 @@ var SourceSchema = new Schema({
         type: String,
         required: true
     },
-    colors: {
-        nav: {
-            type: String,
-            required: true
-        },
-        bg: {
-            type: String,
-            required: true
-        },
-        header: {
-            type: String,
-            required: true
-        },
-        timestamp: {
-            type: String,
-            required: true
-        },
-        author: {
-            type: String,
-            required: true
-        },
-        description: {
-            type: String,
-            required: true
-        }
-    },
-    fonts: {
-        header: {
-            type: String,
-            required: true
-        },
-        timestamp: {
-            type: String,
-            required: true
-        },
-        author: {
-            type: String,
-            required: true
-        },
-        description: {
-            type: String,
-            required: true
-        },
-    },
+    // colors: {
+    //     nav: {
+    //         type: String,
+    //         required: true
+    //     },
+    //     bg: {
+    //         type: String,
+    //         required: true
+    //     },
+    //     header: {
+    //         type: String,
+    //         required: true
+    //     },
+    //     timestamp: {
+    //         type: String,
+    //         required: true
+    //     },
+    //     author: {
+    //         type: String,
+    //         required: true
+    //     },
+    //     description: {
+    //         type: String,
+    //         required: true
+    //     }
+    // },
+    // fonts: {
+    //     header: {
+    //         type: String,
+    //         required: true
+    //     },
+    //     timestamp: {
+    //         type: String,
+    //         required: true
+    //     },
+    //     author: {
+    //         type: String,
+    //         required: true
+    //     },
+    //     description: {
+    //         type: String,
+    //         required: true
+    //     },
+    // },
     pages: [{
         type: Schema.Types.ObjectId,
         ref: "SourcePage"

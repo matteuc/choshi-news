@@ -1,3 +1,9 @@
+body {
+background-image: radial-gradient(rgb(216, 216, 216), rgb(255, 255, 255));
+background-repeat: no-repeat;
+background-size: cover;
+}
+
 #source-img {
     width: 150px;
     height: 150px;
@@ -6,7 +12,7 @@
       inset 0 0 0 2px rgba(255,255,255,0.6), 
       0 1px 1px rgba(0,0,0,0.1);
     background-color: transparent !important;
-    z-index: 999;
+    /* z-index: 991; */
     position: absolute;
     top: 0;
     left: 0;
@@ -21,7 +27,7 @@
     height: inherit;
     display: block;
     /* position: relative; */
-    z-index: 998;
+    /* z-index: 990; */
   }
 
   #source-pages {
@@ -75,9 +81,51 @@
   #sync-articles-btn {
     position: relative;
     top: 6px;
+    left: -12px;
     color: #524AC8;
   }
 
   #channel-articles {
-      margin-top: 50px;
+      margin-top: 200px;
+      height: 100vh;
   }
+
+.grow { 
+  transition: all .2s ease-in-out;
+}
+.grow:hover { 
+  transform: scale(1.05); 
+  box-shadow: 5px 5px 10px #888888;
+}
+
+a.nostyle:link {
+  text-decoration: inherit;
+  color: inherit;
+  cursor: auto;
+}
+
+a.nostyle:visited {
+  text-decoration: inherit;
+  color: inherit;
+  cursor: auto;
+}
+
+.btn-col {
+  border-right: 1px solid rgb(199, 199, 199);
+}
+
+.bookmark-btn i {
+  color: rgb(250, 75, 75);
+}
+
+.like-btn i {
+  color: rgb(81, 214, 255);
+}
+
+.comment-btn i {
+  color: rgb(100, 248, 100);
+}
+
+.article-card {
+  border-left: 5px solid midnightblue;
+}

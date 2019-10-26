@@ -12,6 +12,11 @@ var LikeSchema = new Schema({
     author: {
         type: String,
         required: true
+    },
+    article: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "Article"
     }
 });
 

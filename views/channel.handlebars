@@ -1,7 +1,6 @@
-<link rel="stylesheet" href="styles/channel.css">
-<script src="js/channel.js"></script>
-<script src="js/article.js"></script>
-
+<link rel="stylesheet" href="../styles/channel.css">
+<script src="../js/channel.js"></script>
+<script src="../js/article.js"></script>
 
 
 <header class="channel-masthead text-white text-center">
@@ -18,7 +17,6 @@
                 <div class="row" id="source-pages">
                     <div class="col-11">
                         <select id="page-selection" class="form-control">
-                            <option selected>All</option>
                             {{#each pages}}
                             <option data-id="{{_id}}">{{pageName}}</option>
                             {{/each}}
@@ -34,12 +32,13 @@
     </div>
 </header>
 
-<div class="container mt-5" id="channel-articles">
-
+<div class="container" id="channel-articles">
 </div>
 
 
 <span id="user-img" data-url="{{user.picture}}"></span>
+<span id="user-token" data-token="{{user.sub}}"></span>
+
 
 <script>
     var userImg = $("#user-img").attr("data-url");

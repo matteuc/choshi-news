@@ -9,7 +9,17 @@ module.exports = function (app) {
       var config = {
         user: user
       };
-      res.render("home", config);
+      
+      db.User.findOne({
+        token: user.sub
+      }).then(function(userInfo){
+        config.user.numLikes = userInfo.likes.length;
+        config.user.numComments = userInfo.comments.length;
+        config.user.numFavorites = userInfo.favorites.length;
+
+        res.render("home", config);
+
+      });
     }
     else {
       // Redirect to Login Page
@@ -29,32 +39,6 @@ module.exports = function (app) {
     }
   })
 
-  app.get("/channels", function (req, res) {
-    if (req.session.passport) {
-      var user = req.session.passport.user.profile._json;
-      var config = {
-        user: user
-      };
-
-      // View all available channels (i.e. sources)
-      db.SourceIcon.find({}).then(function (icons) {
-        // RENDER source selection page
-        config.icons = icons;
-        res.render("channel-selection", config);
-
-      }).catch(function (err) {
-        // RENDER error has occurred page with the returned error
-        config.err = err;
-        res.render("error", config);
-      });
-    }
-    else {
-      // Redirect to Login Page
-      res.redirect("/login");
-
-    }
-  });
-
   app.get("/channels/:source", function (req, res) {
 
     if (req.session.passport) {
@@ -68,16 +52,14 @@ module.exports = function (app) {
       // Retrieve source schema from database
       db.Source.findOne({
         route: route
-      }).then(function (schema) {
+      }).populate("pages").then(function (schema) {
         if (schema) {
           // RENDER source page
           config.name = schema.name;
           config.url = schema.url;
           config.logo = schema.logo;
           config.pages = schema.pages;
-          config.colors = schema.colors;
-          config.fonts = schema.fonts;
-        
+          config._id = schema._id;
           res.render("channel", config);
 
         } else {
@@ -134,9 +116,23 @@ module.exports = function (app) {
   app.get("/auth/google/callback", passport.authenticate("google"), function (req, res) {
     var userAccount = req.session.passport.user.profile._json;
 
-    // Code to perform on user login
+    let userInfo = {};
+    userInfo.name = userAccount.given_name;
+    userInfo.photo = userAccount.picture;
+    userInfo.token = userAccount.sub;
 
-    res.redirect("/");
+    // Create user account in database
+    db.User.findOneAndUpdate({
+      token: userInfo.token
+    }, userInfo, 
+    {
+      upsert: true,
+      new: true,
+      setDefaultsOnInsert: true
+    }).then(function(){
+      res.redirect("/");
+    })
+
   });
 
   app.get("/logout", function (req, res) {
