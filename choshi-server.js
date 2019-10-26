@@ -56,7 +56,8 @@ require("./routes/apiRoutes")(app);
 require("./routes/htmlRoutes")(app);
 
 // Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/choshi", { useNewUrlParser: true });
+let MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/choshi"
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 
 // Start the server
 app.listen(PORT, function() {
