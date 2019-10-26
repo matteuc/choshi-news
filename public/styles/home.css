@@ -1,0 +1,108 @@
+header.masthead {
+    position: relative;
+    background-color: #343a40;
+    background: url("../media/images/home-bg.jpg") no-repeat center center;
+    background-size: cover;
+    padding-top: 4rem;
+    padding-bottom: 8rem;
+    height: 100vh;
+  }
+  
+  header.masthead .overlay {
+    position: absolute;
+    background-color: #212529;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0.3;
+  }
+  
+  header.masthead h1 {
+    font-size: 2rem;
+  }
+  
+  @media (min-width: 768px) {
+    header.masthead {
+      padding-top: 6rem;
+      padding-bottom: 12rem;
+    }
+    header.masthead h1 {
+      font-size: 3rem;
+    }
+  }
+
+  #user-img {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    box-shadow:
+      inset 0 0 0 2px rgba(255,255,255,0.6), 
+      0 1px 1px rgba(0,0,0,0.1);
+    background-color: transparent !important;
+    z-index: 999;
+  }
+  
+  #user-img  img {
+    border-radius: inherit;
+    width: inherit;
+    height: inherit;
+    display: block;
+    /* position: relative; */
+    z-index: 998;
+  }
+
+  .info-header {
+      color: rgb(231, 229, 229);
+      text-shadow: rgb(231, 229, 229) 1px 0 10px;
+  }
+
+  .user-name {
+    color: rgb(78, 245, 189);
+    text-shadow: rgb(78, 245, 189) 1px 0 10px;
+
+}
+
+.info-num {
+    font-size: 2em;
+}
+
+.btn{
+    margin: 4px;
+    box-shadow: 1px 1px 5px #888888;
+}
+
+.btn-sky {
+    color: #fff;
+    background-color: #0bacd3;
+    border-bottom:2px solid #098aa9;
+    }
+    
+    .btn-sky:hover,.btn-sky.active:focus, .btn-sky:focus, .open>.dropdown-toggle.btn-sky {
+    color: #fff;
+    background-color: #29b6d8;
+    border-bottom:2px solid #2192ad;
+    outline: none;
+    }
+    
+    .btn-sky:active, .btn-sky.active {
+    color: #fff;
+    background-color: #0a97b9;
+    border-top:2px solid #087994;
+    outline-offset: none;
+    margin-top: 2px;
+    }
+
+    .btn:focus,
+.btn:active:focus,
+.btn.active:focus {
+    outline: none;
+    outline-offset: 0px;
+}
+
+#channel-btn-text {
+    color:#fff;
+    font-family: 'Satisfy', cursive;
+
+}
+

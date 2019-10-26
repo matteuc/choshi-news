@@ -1,0 +1,43 @@
+<link rel="stylesheet" href="styles/home.css">
+<link href="https://fonts.googleapis.com/css?family=Pacifico|Satisfy&display=swap" rel="stylesheet">
+<header class="masthead text-white text-center">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 mx-auto">
+                <h3 class="mb-5">welcome <span class="user-name">{{user.given_name}}</span></h1>
+                <div id="user-img" class="m-auto">
+                    <img src="{{user.picture}}" alt="">
+                </div>
+            <button type="button" class="mt-5 show-overlay-btn btn btn-sky btn-lg"><span id="channel-btn-text">Explore Channels </span> <i class="action-btn mdi mdi-television-classic"></i></a></button>
+                <div class="row mt-5">
+                    <div class="col-4">
+                        <span id="num-favorites" class="info-num">0</span>
+                        <h6 class="info-header">Favorites</h6>
+                    </div> 
+                   <div class="col-4">
+                        <span id="num-likes" class="info-num">0</span>
+                        <h6 class="info-header">Likes</h6>
+                    </div> 
+                    <div class="col-4">
+                        <span id="num-comments" class="info-num">0</span>
+                        <h6 class="info-header">Comments</h6>
+                    </div> 
+
+                </div>
+
+            </div>
+            <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
+
+            </div>
+        </div>
+    </div>
+</header>
+
+<script>
+    var userImg = $("#user-img img").attr("src");
+    loadProfilePic(userImg);
+</script>
+
+
+{{>channelOverlay}}

@@ -2,8 +2,28 @@ var db = require("../models");
 var CronJob = require("cron").CronJob;
 
 module.exports = function (app) {
+    function titleCase(str) {
+        var splitStr = str.toLowerCase().split(' ');
+        for (var i = 0; i < splitStr.length; i++) {
+          // You do not need to check if i is larger than splitStr length, as your for does that for you
+          // Assign it back to the array
+          splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+        }
+        // Directly return the joined string
+        return splitStr.join(' ');
+      }
+
     // Create Source Documents
 
+    // Get all channel icons
+    app.get("/api/icons", function (req, res) {
+        db.SourceIcon.find({}).then(function(icons) {
+            let iconsArr = icons.map(function(icon){
+                icon.name = titleCase(icon.name);
+            })
+            res.json(iconsArr);
+        })
+    })
 
     // Retrieving articles from the specific source in the database
     app.get("/api/articles/:sourceID/:pageID", function (req, res) {
@@ -112,6 +132,9 @@ module.exports = function (app) {
                 },
                 {
                     new: true
+                }).then(function(){
+                    // End call to scrape articles
+                    res.json({});
                 })
         }
 

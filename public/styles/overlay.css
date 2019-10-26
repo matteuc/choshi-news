@@ -1,0 +1,53 @@
+.my-overlay {
+    position: fixed; /* Sit on top of the page content */
+    display: none; /* Hidden by default */
+    width: 100%; /* Full width (cover the whole page) */
+    height: 100%; /* Full height (cover the whole page) */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+    z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+    cursor: pointer; /* Add a pointer on hover */
+  }
+
+  .close-overlay-btn {
+    color: white;
+    position: absolute;
+    top: 75px;
+    right: 15px;
+  }
+
+  .overlay-container {
+    position: absolute;
+    top: 20vh;
+    margin: auto;
+  }
+
+  .source-icon {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    box-shadow:
+      inset 0 0 0 2px rgba(255,255,255,0.6), 
+      0 1px 1px rgba(0,0,0,0.1);
+    background-color: transparent !important;
+    z-index: 999;
+  }
+  
+  .source-icon img {
+    border-radius: inherit;
+    width: inherit;
+    height: inherit;
+    display: block;
+    /* position: relative; */
+    z-index: 998;
+  }
+
+  .icon-name {
+    color: rgb(255, 255, 255);
+    text-shadow: rgb(255, 255, 255) 1px 0 10px;
+    font-weight: bold;
+    font-size: 1.2em;
+}

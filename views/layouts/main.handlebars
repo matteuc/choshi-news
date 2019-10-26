@@ -11,19 +11,33 @@
     <script src="https://kit.fontawesome.com/325ada46a1.js" crossorigin="anonymous"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/4.4.95/css/materialdesignicons.css"
         rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.3.2/bootbox.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.3.1/handlebars.runtime.min.js"></script>
+    {{!-- handlebars ./views/partials -f ./public/js/partialsCompiled.js --}}
+    <script src="/js/partialsCompiled.js"></script>
+    <script src="js/main.js"></script>
     <link rel="icon" href="/media/images/icon.png">
     <title>choshi</title>
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-light d-flex justify-content-between">
-        <div>
-            <a id="logout" class="auth-btn" href="/logout"><i class="fas fa-sign-out-alt fa-lg"></i></a>
-            <i id="info-btn" class="fas fa-info-circle"></i>
-            <i id="channel-switch-btn" class="mdi mdi-television-classic"></i>
+        <div id="action-btns-container">
+            <i id="channel-switch-btn" class="show-overlay-btn action-btn mdi mdi-television-classic"></i>
+            <i id="info-btn" class="action-btn fas fa-info-circle"></i>
+            <a class="action-btn " href="/logout"><i class="fas fa-sign-out-alt"></i></a>
         </div>
         <a class="navbar-brand" href="https://github.com/matteuc/choshi-news">
-            <img id="logo" src="/images/white-font.png">
+            <img id="logo" src="/media/images/white-font.png">
         </a>
         <ul class="nav navbar-nav navbar-left">
             <li>

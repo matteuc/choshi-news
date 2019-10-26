@@ -10,16 +10,8 @@ var SourceIconSchema = new Schema({
         type: String,
         required: true
     },
-    color: {
-        type: String,
-        default: "#ffffff"
-    },
-    icon: {
+    iconPath: {
         type: String
-    },
-    fIcon: {
-        type: String,
-        default: "fas fa-newspaper"
     },
     route: {
         type: String

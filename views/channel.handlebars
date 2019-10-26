@@ -1,0 +1,49 @@
+<link rel="stylesheet" href="styles/channel.css">
+<script src="js/channel.js"></script>
+<script src="js/article.js"></script>
+
+
+
+<header class="channel-masthead text-white text-center">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 mx-auto">
+                <div id="source-img" class="m-auto">
+                    <img src="{{logo}}" data-link="{{url}}" alt="">
+                    <h3 class="channel-name">{{name}}</h3>
+                    <span id="source-id" data-id="{{_id}}"></span>
+
+                </div>
+                <div class="row" id="source-pages">
+                    <div class="col-11">
+                        <select id="page-selection" class="form-control">
+                            <option selected>All</option>
+                            {{#each pages}}
+                            <option data-id="{{_id}}">{{pageName}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="col-1">
+                        <i id="sync-articles-btn" class="m-auto fas fa-sync fa-lg"></i>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+
+<div class="container mt-5" id="channel-articles">
+
+</div>
+
+
+<span id="user-img" data-url="{{user.picture}}"></span>
+
+<script>
+    var userImg = $("#user-img").attr("data-url");
+    loadProfilePic(userImg);
+</script>
+
+{{>channelOverlay}}

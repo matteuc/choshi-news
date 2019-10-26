@@ -75,7 +75,6 @@ module.exports = function (app) {
           config.url = schema.url;
           config.logo = schema.logo;
           config.pages = schema.pages;
-          config.structure = schema.structure;
           config.colors = schema.colors;
           config.fonts = schema.fonts;
         

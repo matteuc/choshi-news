@@ -27,12 +27,22 @@
     right: 5%;
 }
 
-#login-btn {
+#action-btns-container {
+    position: absolute;
+    right: 5%;
+}
+
+.action-btn {
+    margin: 3px;
+    font-size: 1.2em;
+}
+
+#login-btn, .action-btn {
     margin-top: -5px;
     color: white;
 }
 
-#login-btn:hover {
+#login-btn:hover, .action-btn:hover {
     color: rgb(228, 243, 162);
 }
 

@@ -6,6 +6,7 @@ module.exports = {
     Like: require("./Like"),
     Source: require("./Source"),
     SourceIcon: require("./SourceIcon"),
+    SourcePage: require("./SourcePage"),
     User: require("./User")
   };
   

@@ -1,0 +1,83 @@
+#source-img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    box-shadow:
+      inset 0 0 0 2px rgba(255,255,255,0.6), 
+      0 1px 1px rgba(0,0,0,0.1);
+    background-color: transparent !important;
+    z-index: 999;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    bottom: 20px;
+  }
+  
+  #source-img  img {
+    border-radius: inherit;
+    width: inherit;
+    height: inherit;
+    display: block;
+    /* position: relative; */
+    z-index: 998;
+  }
+
+  #source-pages {
+    position: absolute;
+      left: 0;
+      right: 0;
+      margin: auto;
+      bottom: -150px;
+  }
+
+  header.channel-masthead {
+      position: relative;
+      background-color: #343a40;
+      background: url("../media/images/landing-bg.jpg") no-repeat center center;
+      background-size: cover;
+      padding-top: 8rem;
+      /* padding-bottom: 8rem; */
+  }
+
+  header.channel-masthead .overlay {
+    position: absolute;
+    background-color: #212529;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0.3;
+  }
+  
+  header.channel-masthead h1 {
+    font-size: 2rem;
+    text-shadow: rgb(255, 255, 255) 1px 0 5px;
+
+  }
+  
+  @media (min-width: 768px) {
+    header.channel-masthead {
+      padding-top: 12rem;
+      /* padding-bottom: 12rem; */
+    }
+    header.channel-masthead h1 {
+      font-size: 3rem;
+    }
+  }
+
+  .channel-name {
+    color:rgb(61, 61, 61); 
+    text-shadow: rgb(167, 166, 166) 1px 0 5px;
+  }
+
+  #sync-articles-btn {
+    position: relative;
+    top: 6px;
+    color: #524AC8;
+  }
+
+  #channel-articles {
+      margin-top: 50px;
+  }
