@@ -27,5 +27,5 @@ var SourcePageSchema = new Schema({
 // This creates our model from the above schema, using mongoose's model method
 var SourcePage = mongoose.model("SourcePage", SourcePageSchema);
 
-// Export the Article model
+// Export the SourcePage model
 module.exports = SourcePage;

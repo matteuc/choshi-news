@@ -118,7 +118,7 @@ a.nostyle:visited {
   color: rgb(250, 75, 75);
 }
 
-.like-btn i {
+.like-btn i, .like-list-btn i {
   color: rgb(81, 214, 255);
 }
 

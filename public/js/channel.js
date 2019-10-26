@@ -43,7 +43,7 @@ $(document).ready(function () {
         let pageID = getPageId();
 
         // Make ajax request
-        $.get(`/api/articles/${sourceID}/${pageID}`, function (articles) {
+        $.get(`/api/${sourceID}/${pageID}/articles`, function (articles) {
             // Call callback
             cb();
             // Render articles
@@ -71,9 +71,34 @@ $(document).ready(function () {
         return $("#page-selection").find('option:selected').attr("data-id");
     }
 
-    // Liking an article
-    $(document).on("click", ".like-btn", function () {
-        let btnDiv = $(this);
+    // Viewing Likes
+    $(document).on("click", ".like-btn p", function () {
+        let btnDiv = $(this).parent();
+        let articleID = btnDiv.attr("data-id");
+
+        $.get(`/api/articles/${articleID}/likes`, function(likes) {
+            if(likes.length) {
+                var likesList = Handlebars.templates.likesView({likes: likes})
+                bootbox.dialog({
+                    message: likesList,
+                    centerVertical: true,
+                    closeButton: false,
+                    size: 'lg',
+                    buttons: [{
+                        label: "Cancel",
+                        className: "btn btn-secondary",
+                        callback: function () { }
+                    }],
+                    onEscape: true,
+                    backdrop: true
+                })
+            }
+        })
+    })
+
+    // Liking/Unliking an article
+    $(document).on("click", ".like-btn i", function () {
+        let btnDiv = $(this).parent();
         let btn = btnDiv.find("i");
         let text = btnDiv.find("p");
         let num = parseInt(text.attr("data-likes"));

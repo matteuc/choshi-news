@@ -6,11 +6,6 @@ var mongoose = require("mongoose");
 
 
 module.exports = function (app) {
-    // Create Source Icons
-    // db.SourceIcon.create({
-    //     name: "Reddit",
-    //     iconPath: "./media/images/reddit-icon.png"
-    // });
 
     function titleCase(str) {
         var splitStr = str.toLowerCase().split(' ');
@@ -34,24 +29,6 @@ module.exports = function (app) {
             res.json(iconsArr);
         })
     })
-
-    // Retrieving articles from the specific source in the database
-    app.get("/api/articles/:sourceID/:pageID", function (req, res) {
-        var sourceID = req.params.sourceID
-        var pageID = req.params.pageID
-        db.SourcePage.findOne({
-            _id: pageID,
-            source: sourceID
-        }).populate("articles").select("articles").then(function (schema) {
-            if (schema) {
-                res.json(schema.articles)
-            } else {
-                res.json({});
-            }
-        }).catch(function (err) {
-            res.json(err);
-        });
-    });
 
     // Scraping articles from the source's page
     app.get("/api/scrape/:sourceID/:pageID", function (req, res) {
@@ -121,7 +98,15 @@ module.exports = function (app) {
                         article.url = `${pageURL.split(".com")[0]}.com${article.url}`
 
                     }
-                    bulk.find(article).upsert().updateOne(article);
+                    bulk.find({
+                        url: article.url
+                    }).upsert().updateOne({
+                        url: article.url,
+                        title: article.title,
+                        description: article.description,
+                        image: article.image
+
+                    });
                 }
             });
 
@@ -161,11 +146,11 @@ module.exports = function (app) {
     // Retrieving all likes for the specified article
     app.get("/api/articles/:id/likes", function (req, res) {
         var id = req.params.id;
-        db.Article.findOne({
-            _id: id
-        }).populate("likes").select("likes ").then(function (data) {
+        db.Like.find({
+            article: mongoose.Types.ObjectId(id)
+        }).then(function (data) {
             if (data) {
-                res.json(data.likes)
+                res.json(data)
             } else {
                 res.json({});
             }
@@ -250,6 +235,24 @@ module.exports = function (app) {
         }
     })
 
+        // Retrieving articles from the specific source in the database
+        app.get("/api/:sourceID/:pageID/articles", function (req, res) {
+            var sourceID = req.params.sourceID
+            var pageID = req.params.pageID
+            db.SourcePage.findOne({
+                _id: pageID,
+                source: sourceID
+            }).populate("articles").select("articles").then(function (schema) {
+                if (schema) {
+                    res.json(schema.articles.reverse())
+                } else {
+                    res.json({});
+                }
+            }).catch(function (err) {
+                res.json(err);
+            });
+        });
+
     // Create a comment
     app.post("/api/articles/:articleID/comments", function (req, res) {
         var comment = JSON.parse(req.body.comment);
@@ -307,7 +310,7 @@ module.exports = function (app) {
                 .then(function (newLike) {
                     // Add to article
                     like_id = newLike._id;
-                    return db.Article.findOneAndUpdate({ _id: articleID }, { $push: { likes: mongoose.Types.ObjectId(like_id) } }, { new: true });
+                    return db.Article.findOneAndUpdate({ _id: mongoose.Types.ObjectId(articleID) }, { $push: { likes: mongoose.Types.ObjectId(like_id) } }, { new: true });
                 })
                 .then(function () {
                     // ... then to user
@@ -356,6 +359,7 @@ module.exports = function (app) {
 
 
     });
+    
 
     // Delete a comment
     app.delete("/api/articles/:articleID/comments", function (req, res) {
@@ -454,6 +458,7 @@ module.exports = function (app) {
         }
 
     });
+
 
     function refreshAll() {
 

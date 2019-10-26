@@ -23,7 +23,7 @@ templates['article'] = template({"1":function(container,depth0,helpers,partials,
     + alias5(((helper = (helper = helpers.description || (depth0 != null ? depth0.description : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"description","hash":{},"data":data}) : helper)))
     + "</p>\r\n            </a>\r\n            <hr>\r\n            <div class=\"mt-3 row text-center\">\r\n                <div class=\"col-4 btn-col\">\r\n                    <div class=\"like-btn\" data-id=\""
     + alias5(((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"_id","hash":{},"data":data}) : helper)))
-    + "\" data-liked=\"false\" data-likeid=\"\">\r\n                        <i class=\"far far fa-arrow-alt-circle-up\" ></i>\r\n                        <p class=\"text-muted\" data-likes=\""
+    + "\" data-liked=\"false\" data-likeid=\"\">\r\n                        <i class=\"far fa-arrow-alt-circle-up\" ></i>\r\n                        <p class=\"text-muted\" data-likes=\""
     + alias5(alias6(((stack1 = (depth0 != null ? depth0.likes : depth0)) != null ? stack1.length : stack1), depth0))
     + "\">"
     + alias5(alias6(((stack1 = (depth0 != null ? depth0.likes : depth0)) != null ? stack1.length : stack1), depth0))
@@ -54,7 +54,31 @@ templates['channelOverlay'] = template({"compiler":[8,">= 4.3.0"],"main":functio
 templates['comment'] = template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
     return "";
 },"useData":true});
-templates['like'] = template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
+templates['commentsView'] = template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
     return "";
+},"useData":true});
+templates['like'] = template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=container.propertyIsEnumerable, alias2=depth0 != null ? depth0 : (container.nullContext || {}), alias3=container.hooks.helperMissing, alias4="function", alias5=container.escapeExpression;
+
+  return "<li class=\"like-block list-group-item\">\r\n    <div class=\"d-flex justify-content-between align-items-center\">\r\n        <div class=\"inset\">\r\n            <img src=\""
+    + alias5(((helper = (helper = helpers.authorPhoto || (depth0 != null ? depth0.authorPhoto : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"authorPhoto","hash":{},"data":data}) : helper)))
+    + "\" alt=\"\">\r\n        </div>\r\n        <span class=\"text-center font-weight-bold text-muted\">"
+    + alias5(((helper = (helper = helpers.author || (depth0 != null ? depth0.author : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"author","hash":{},"data":data}) : helper)))
+    + "</span>\r\n        <div class=\"like-list-btn\">\r\n            <i class=\"ml-3 fas fa-arrow-alt-circle-up\"></i>\r\n        </div>\r\n    </div>\r\n</li>";
+},"useData":true});
+templates['likesView'] = template({"1":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=container.propertyIsEnumerable, alias2=depth0 != null ? depth0 : (container.nullContext || {}), alias3=container.hooks.helperMissing, alias4="function", alias5=container.escapeExpression;
+
+  return "    <li class=\"like-block list-group-item\">\r\n        <div class=\"d-flex justify-content-between align-items-center\">\r\n            <div class=\"inset\">\r\n                <img src=\""
+    + alias5(((helper = (helper = helpers.authorPhoto || (depth0 != null ? depth0.authorPhoto : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"authorPhoto","hash":{},"data":data}) : helper)))
+    + "\" alt=\"\">\r\n            </div>\r\n            <span class=\"text-center font-weight-bold text-muted\">"
+    + alias5(((helper = (helper = helpers.author || (depth0 != null ? depth0.author : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"author","hash":{},"data":data}) : helper)))
+    + "</span>\r\n            <div class=\"like-list-btn\">\r\n                <i class=\"ml-3 fas fa-arrow-alt-circle-up\"></i>\r\n            </div>\r\n        </div>\r\n    </li>\r\n";
+},"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=container.propertyIsEnumerable;
+
+  return "<div class=\"likes-list\">\r\n"
+    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.likes : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "</div>";
 },"useData":true});
 })();

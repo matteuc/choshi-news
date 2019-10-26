@@ -1,0 +1,15 @@
+<div class="likes-list">
+    {{#each likes}}
+    <li class="like-block list-group-item">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="inset">
+                <img src="{{authorPhoto}}" alt="">
+            </div>
+            <span class="text-center font-weight-bold text-muted">{{author}}</span>
+            <div class="like-list-btn">
+                <i class="ml-3 fas fa-arrow-alt-circle-up"></i>
+            </div>
+        </div>
+    </li>
+    {{/each}}
+</div>
