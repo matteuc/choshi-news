@@ -3,6 +3,8 @@ var CronJob = require("cron").CronJob;
 var axios = require("axios");
 var cheerio = require("cheerio");
 var mongoose = require("mongoose");
+var moment = require("moment");
+
 
 
 module.exports = function (app) {
@@ -39,9 +41,9 @@ module.exports = function (app) {
         var articles = [];
         // RETRIEVE SOURCE STRUCTURE 
         db.SourcePage.findOne({
-            _id: pageID,
-            source: sourceID
-        }).populate("source")
+                _id: pageID,
+                source: sourceID
+            }).populate("source")
             // SCRAPE
             .then(function (sourcePageObj) {
                 var structures = sourcePageObj.source.structure;
@@ -50,22 +52,22 @@ module.exports = function (app) {
 
                 axios.get(pageURL).then(function (response) {
                     var $ = cheerio.load(response.data);
-                    structures.forEach(function(structure){
+                    structures.forEach(function (structure) {
                         $(structure.container).each(function (i, element) {
                             var article = {};
-    
+
                             // Retrieve URL
                             var url = $(element).find(structure.url).attr("href");
                             article.url = url;
-    
+
                             // Retrieve remaining article information
                             var articleInfoKeys = ["title", "description", "author", "timestamp", "image"];
-    
+
                             for (key of articleInfoKeys) {
                                 if (structure[key].container) {
                                     var value;
                                     var valueContainer = $(element).find(structure[key].container);
-    
+
                                     if (structure[key].text) {
                                         value = valueContainer.text();
                                     } else if (structure[key].attr.length != 0) {
@@ -73,11 +75,11 @@ module.exports = function (app) {
                                     } else {
                                         value = "";
                                     }
-    
+
                                     article[key] = value;
                                 }
                             }
-    
+
                             articles.push(article);
                         });
                     })
@@ -101,10 +103,12 @@ module.exports = function (app) {
                     bulk.find({
                         url: article.url
                     }).upsert().updateOne({
-                        url: article.url,
-                        title: article.title,
-                        description: article.description,
-                        image: article.image
+                        $set: {
+                            url: article.url,
+                            title: article.title,
+                            description: article.description,
+                            image: article.image
+                        }
 
                     });
                 }
@@ -120,25 +124,21 @@ module.exports = function (app) {
 
         function addArticles(articleIDs) {
             // Add articles into SourcePage 
-            db.SourcePage.findOneAndUpdate(
-                {
-                    _id: pageID,
-                    source: sourceID
-                },
-                {
-                    $addToSet: {
-                        articles:
-                        {
-                            $each: articleIDs
-                        }
+            db.SourcePage.findOneAndUpdate({
+                _id: pageID,
+                source: sourceID
+            }, {
+                $addToSet: {
+                    articles: {
+                        $each: articleIDs
                     }
-                },
-                {
-                    new: true
-                }).then(function () {
-                    // End call to scrape articles
-                    res.json({});
-                })
+                }
+            }, {
+                new: true
+            }).then(function () {
+                // End call to scrape articles
+                res.json({});
+            })
         }
 
     });
@@ -198,8 +198,7 @@ module.exports = function (app) {
             }).catch(function (err) {
                 res.json(err);
             });
-        }
-        else {
+        } else {
             response.error = `Access to ${pathToken}'s favorites is not permitted.`;
             res.json(response);
         }
@@ -215,8 +214,8 @@ module.exports = function (app) {
         var pathToken = req.params.userID;
         if (req.session.passport && (userToken == pathToken)) {
             db.User.findOne({
-                token: userToken
-            })
+                    token: userToken
+                })
                 .populate("likes")
                 .select("favorites + likes")
                 .then(function (data) {
@@ -228,34 +227,33 @@ module.exports = function (app) {
                 }).catch(function (err) {
                     res.json(err);
                 });
-        }
-        else {
+        } else {
             response.error = `Access to ${pathToken}'s likes and favorites is not permitted.`;
             res.json(response);
         }
     })
 
-        // Retrieving articles from the specific source in the database
-        app.get("/api/:sourceID/:pageID/articles", function (req, res) {
-            var sourceID = req.params.sourceID
-            var pageID = req.params.pageID
-            db.SourcePage.findOne({
-                _id: pageID,
-                source: sourceID
-            }).populate("articles").select("articles").then(function (schema) {
-                if (schema) {
-                    res.json(schema.articles.reverse())
-                } else {
-                    res.json({});
-                }
-            }).catch(function (err) {
-                res.json(err);
-            });
+    // Retrieving articles from the specific source in the database
+    app.get("/api/:sourceID/:pageID/articles", function (req, res) {
+        var sourceID = req.params.sourceID
+        var pageID = req.params.pageID
+        db.SourcePage.findOne({
+            _id: pageID,
+            source: sourceID
+        }).populate("articles").select("articles").then(function (schema) {
+            if (schema) {
+                res.json(schema.articles.reverse())
+            } else {
+                res.json({});
+            }
+        }).catch(function (err) {
+            res.json(err);
         });
+    });
 
     // Create a comment
     app.post("/api/articles/:articleID/comments", function (req, res) {
-        var comment = JSON.parse(req.body.comment);
+        var comment = req.body.comment;
 
         // Add to article and to user
         var articleID = req.params.articleID;
@@ -266,21 +264,42 @@ module.exports = function (app) {
         var userToken = user.sub;
         var pathToken = req.body.userID;
         if (req.session.passport && (userToken == pathToken)) {
+            comment.author = user.given_name;
+            comment.authorPhoto = user.picture;
+            let comment_id;
             db.Comment.create(comment)
                 .then(function (newComment) {
+
                     // Add to article
-                    return db.Article.findOneAndUpdate({ _id: articleID }, { $push: { comments: mongoose.Types.ObjectId(newComment._id) } }, { new: true });
+                    comment_id = newComment._id;
+                    return db.Article.findOneAndUpdate({
+                        _id: articleID
+                    }, {
+                        $push: {
+                            comments: mongoose.Types.ObjectId(comment_id)
+                        }
+                    }, {
+                        new: true
+                    });
                 })
-                .then(function () {
+                .then(function (data) {
                     // ... then to user
-                    return db.User.findOneAndUpdate({ token: userToken }, { $push: { comments: mongoose.Types.ObjectId(newComment._id) } }, { new: true });
+                    res.json({});
+                    return db.User.findOneAndUpdate({
+                        token: userToken
+                    }, {
+                        $push: {
+                            comments: mongoose.Types.ObjectId(comment_id)
+                        }
+                    }, {
+                        new: true
+                    });
                 })
                 .catch(function (err) {
                     // If an error occurred, send it to the client
                     res.json(err);
                 });
-        }
-        else {
+        } else {
             response.error = `Creation of a comment for ${pathToken} is not permitted.`;
             res.json(response);
         }
@@ -310,21 +329,36 @@ module.exports = function (app) {
                 .then(function (newLike) {
                     // Add to article
                     like_id = newLike._id;
-                    return db.Article.findOneAndUpdate({ _id: mongoose.Types.ObjectId(articleID) }, { $push: { likes: mongoose.Types.ObjectId(like_id) } }, { new: true });
+                    return db.Article.findOneAndUpdate({
+                        _id: mongoose.Types.ObjectId(articleID)
+                    }, {
+                        $push: {
+                            likes: mongoose.Types.ObjectId(like_id)
+                        }
+                    }, {
+                        new: true
+                    });
                 })
                 .then(function () {
                     // ... then to user
                     res.json({
                         id: like_id
                     });
-                    return db.User.findOneAndUpdate({ token: userToken }, { $push: { likes: mongoose.Types.ObjectId(like_id) } }, { new: true });
+                    return db.User.findOneAndUpdate({
+                        token: userToken
+                    }, {
+                        $push: {
+                            likes: mongoose.Types.ObjectId(like_id)
+                        }
+                    }, {
+                        new: true
+                    });
                 })
                 .catch(function (err) {
                     // If an error occurred, send it to the client
                     res.json(err);
                 });
-        }
-        else {
+        } else {
             response.error = `Creation of a like for ${pathToken} is not permitted.`;
             res.json(response);
         }
@@ -342,7 +376,15 @@ module.exports = function (app) {
         var userToken = user.sub;
         var pathToken = req.params.userID;
         if (req.session.passport && (userToken == pathToken)) {
-            db.User.findOneAndUpdate({ token: userToken }, { $push: { favorites: mongoose.Types.ObjectId(articleID) } }, { new: true })
+            db.User.findOneAndUpdate({
+                    token: userToken
+                }, {
+                    $push: {
+                        favorites: mongoose.Types.ObjectId(articleID)
+                    }
+                }, {
+                    new: true
+                })
                 .then(function (newFav) {
                     res.json(newFav);
                 })
@@ -351,15 +393,14 @@ module.exports = function (app) {
                     res.json(err);
                 });
 
-        }
-        else {
+        } else {
             response.error = `Creation of a favorite for ${pathToken} is not permitted.`;
             res.json(response);
         }
 
 
     });
-    
+
 
     // Delete a comment
     app.delete("/api/articles/:articleID/comments", function (req, res) {
@@ -373,10 +414,22 @@ module.exports = function (app) {
         var pathToken = req.body.userID;
         if (req.session.passport && (userToken == pathToken)) {
             // Delete from user
-            db.User.findOneAndUpdate({ token: userToken }, { $pull: { comments: commentID } })
+            db.User.findOneAndUpdate({
+                    token: userToken
+                }, {
+                    $pull: {
+                        comments: commentID
+                    }
+                })
                 .then(function () {
                     // ... then from article
-                    db.Article.findOneAndUpdate({ _id: articleID }, { $pull: { comments: commentID } })
+                    db.Article.findOneAndUpdate({
+                            _id: articleID
+                        }, {
+                            $pull: {
+                                comments: commentID
+                            }
+                        })
                         .then(function (updatedC) {
 
                             res.json(updatedC);
@@ -387,8 +440,7 @@ module.exports = function (app) {
                     res.json(err);
                 });
 
-        }
-        else {
+        } else {
             response.error = `Deletion of ${pathToken}'s comments is not permitted.`;
             res.json(response);
         }
@@ -407,10 +459,22 @@ module.exports = function (app) {
         var pathToken = req.body.userID;
         if (req.session.passport && (userToken == pathToken)) {
             // Delete from user
-            db.User.findOneAndUpdate({ token: userToken }, { $pull: { likes: likeID } })
+            db.User.findOneAndUpdate({
+                    token: userToken
+                }, {
+                    $pull: {
+                        likes: likeID
+                    }
+                })
                 .then(function () {
                     // ... then from article
-                    return db.Article.findOneAndUpdate({ _id: articleID }, { $pull: { likes: likeID } })
+                    return db.Article.findOneAndUpdate({
+                        _id: articleID
+                    }, {
+                        $pull: {
+                            likes: likeID
+                        }
+                    })
                 })
                 .then(function (updatedL) {
                     return db.Like.deleteOne({
@@ -424,8 +488,7 @@ module.exports = function (app) {
                     // If an error occurred, send it to the client
                     res.json(err);
                 });
-        }
-        else {
+        } else {
             response.error = `Deletion of ${pathToken}'s likes is not permitted.`;
             res.json(response);
         }
@@ -442,7 +505,15 @@ module.exports = function (app) {
         var userToken = user.sub;
         var pathToken = req.params.userID;
         if (req.session.passport && (userToken == pathToken)) {
-            db.User.findOneAndUpdate({ token: userToken }, { $pull: { favorites: articleID } }, { new: true })
+            db.User.findOneAndUpdate({
+                    token: userToken
+                }, {
+                    $pull: {
+                        favorites: articleID
+                    }
+                }, {
+                    new: true
+                })
                 .then(function (userUpdate) {
                     res.json(userUpdate);
                 })
@@ -451,8 +522,7 @@ module.exports = function (app) {
                     res.json(err);
                 });
 
-        }
-        else {
+        } else {
             response.error = `Deletion of ${pathToken}'s favorites is not permitted.`;
             res.json(response);
         }
@@ -476,5 +546,5 @@ module.exports = function (app) {
     var updateFeed = new CronJob("0 0 */3 * * *", function () {
         refreshAll();
         deleteOldArticles(15);
-    }, function () { }, true)
+    }, function () {}, true)
 }

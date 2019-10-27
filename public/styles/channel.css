@@ -129,3 +129,12 @@ a.nostyle:visited {
 .article-card {
   border-left: 5px solid midnightblue;
 }
+
+#commentsView {
+  max-height: 90vh;
+}
+
+.commentsList {
+  max-height: 60vh;
+  overflow: auto;
+}
