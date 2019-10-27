@@ -3,6 +3,12 @@ background-image: radial-gradient(rgb(216, 216, 216), rgb(255, 255, 255));
 background-repeat: no-repeat;
 background-size: cover;
 }
+@media (max-width: 500px) {
+
+      .article-card .text-muted {
+        font-size: 0.7em;
+      }
+}
 
 #source-img {
     width: 150px;
