@@ -87,7 +87,7 @@ templates['commentsView'] = template({"1":function(container,depth0,helpers,part
 
   return "<div id=\"commentsView\" class=\"container justify-content-center\">\r\n    <h4 class=\"text-center\">Comments</h4>\r\n    <div class=\"commentsList\">\r\n"
     + ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),((stack1 = (depth0 != null ? depth0.comments : depth0)) != null ? stack1.length : stack1),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(4, data, 0),"data":data})) != null ? stack1 : "")
-    + "    </div>\r\n    <div class=\"mt-5 p-1 bg-light rounded rounded-pill shadow-sm mb-4\">\r\n        <div class=\"input-group\">\r\n            <input id=\"comment-input\" type=\"text\" placeholder=\"Enter your comment here\"\r\n                class=\"form-control border-0 bg-light\">\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n<script>\r\n    $(\".commentsList\").scrollTop(1E10);\r\n</script>";
+    + "    </div>\r\n    <div class=\"mt-5 p-1 bg-light rounded rounded-pill shadow-sm mb-4\">\r\n        <div class=\"input-group\">\r\n            <input id=\"comment-input\" type=\"text\" placeholder=\"Enter your comment here\"\r\n                class=\"form-control border-0 bg-light\">\r\n        </div>\r\n    </div>\r\n</div>\r\n";
 },"useData":true});
 templates['like'] = template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
     var helper, alias1=container.propertyIsEnumerable, alias2=depth0 != null ? depth0 : (container.nullContext || {}), alias3=container.hooks.helperMissing, alias4="function", alias5=container.escapeExpression;

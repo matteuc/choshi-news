@@ -108,7 +108,8 @@ $(document).ready(function () {
             var commentsView = Handlebars.templates.commentsView({
                 comments: comments
             })
-            bootbox.dialog({
+            
+            var commentViewModal = bootbox.dialog({
                 message: commentsView,
                 centerVertical: true,
                 closeButton: false,
@@ -121,6 +122,10 @@ $(document).ready(function () {
                 onEscape: true,
                 backdrop: true
             })
+
+            commentViewModal.on('shown.bs.modal', function(e){
+                $(".commentsList").animate({ scrollTop: commentList.prop("scrollHeight") });
+            });
 
         })
 
@@ -205,7 +210,7 @@ $(document).ready(function () {
                             var commentPartial = Handlebars.templates.comment(comment);
                             commentList.append(commentPartial);
                         })
-                        commentList.scrollTop(1E10);
+                        commentList.animate({ scrollTop: commentList.prop("scrollHeight") });
 
         
                     });
