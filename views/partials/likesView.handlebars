@@ -1,4 +1,6 @@
-<div class="likes-list">
+<div class="likes-list container justify-content-center">
+    <h4 class="text-center">Likes</h4>
+    {{#if likes.length}}
     {{#each likes}}
     <li class="like-block list-group-item">
         <div class="d-flex justify-content-between align-items-center">
@@ -12,4 +14,10 @@
         </div>
     </li>
     {{/each}}
+    {{else}}
+    <div id="empty-upvotes-msg" class="text-center">
+            <p class="text-muted text-center">This article has no upvotes yet.</p>
+            <p><i class="fas fa-arrow-alt-circle-up fa-3x"></i></p>
+        </div>
+    {{/if}}
 </div>

@@ -87,21 +87,8 @@ module.exports = function (app) {
       var config = {
         user: user
       };
-      var userToken = user.sub;
 
-      // Render favorites
-      db.User.findOne({
-        token: userToken
-      })
-      .populate("favorites")
-      .select("favorites")
-      .then(function(savedArticles){
-        res.render("saved", {
-          articles: savedArticles
-        });
-
-      })
-
+      res.render("saved", config);
     }
     else {
       // Redirect to Login Page

@@ -1,0 +1,45 @@
+<div id="commentsView" class="container justify-content-center">
+    <h4 class="text-center">Comments</h4>
+    <div class="commentsList">
+        {{#if comments.length}}
+        {{#each comments}}
+        <li class="comment-block list-group-item">
+            <div class="row">
+                <div class="col-1">
+                    <div class="inset">
+                        <img src="{{authorPhoto}}" alt="">
+                    </div>
+                </div>
+                <div class="col-11">
+                    <p class="mb-0 font-weight-bold">
+                        {{author}}
+                    </p>
+                    <p class="text-muted">
+                        {{date}}
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <p>
+                        {{content}}
+                    </p>
+                </div>
+            </div>
+        </li>
+
+        {{/each}}
+        {{else}}
+        <div id="empty-comments-msg" class="text-center">
+            <p class="text-muted text-center">No comments have been added yet.</p>
+            <p><i class="fas fa-comments fa-3x"></i></p>
+        </div>
+        {{/if}}
+    </div>
+    <div class="mt-5 p-1 bg-light rounded rounded-pill shadow-sm mb-4">
+        <div class="input-group">
+            <input id="comment-input" type="text" placeholder="Enter your comment here"
+                class="form-control border-0 bg-light">
+        </div>
+    </div>
+</div>

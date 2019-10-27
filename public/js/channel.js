@@ -2,6 +2,7 @@ $(document).ready(function () {
     var sourceID = $("#source-id").attr("data-id");
     var channelArticles = $("#channel-articles");
     var userToken = $("#user-token").attr("data-token");
+    var currCommentArticleID;
 
     function markArticles() {
         $.get(`/api/profile/${userToken}`, function (userData) {
@@ -76,24 +77,58 @@ $(document).ready(function () {
         let btnDiv = $(this).parent();
         let articleID = btnDiv.attr("data-id");
 
-        $.get(`/api/articles/${articleID}/likes`, function(likes) {
-            if(likes.length) {
-                var likesList = Handlebars.templates.likesView({likes: likes})
-                bootbox.dialog({
-                    message: likesList,
-                    centerVertical: true,
-                    closeButton: false,
-                    size: 'lg',
-                    buttons: [{
-                        label: "Cancel",
-                        className: "btn btn-secondary",
-                        callback: function () { }
-                    }],
-                    onEscape: true,
-                    backdrop: true
-                })
-            }
+        $.get(`/api/articles/${articleID}/likes`, function (likes) {
+            var likesList = Handlebars.templates.likesView({
+                likes: likes
+            })
+            bootbox.dialog({
+                message: likesList,
+                centerVertical: true,
+                closeButton: false,
+                size: 'lg',
+                buttons: [{
+                    label: "Cancel",
+                    className: "btn btn-secondary",
+                    callback: function () {}
+                }],
+                onEscape: true,
+                backdrop: true
+            })
+
         })
+    })
+
+    // Viewing comments
+    $(document).on("click", ".comment-btn", function () {
+        let btnDiv = $(this);
+        let articleID = btnDiv.attr("data-id");
+        currCommentArticleID = articleID;
+
+        $.get(`/api/articles/${articleID}/comments`, function (comments) {
+            var commentsView = Handlebars.templates.commentsView({
+                comments: comments
+            })
+            
+            var commentViewModal = bootbox.dialog({
+                message: commentsView,
+                centerVertical: true,
+                closeButton: false,
+                size: 'lg',
+                buttons: [{
+                    label: "Cancel",
+                    className: "btn btn-secondary",
+                    callback: function () {}
+                }],
+                onEscape: true,
+                backdrop: true
+            })
+
+            commentViewModal.on('shown.bs.modal', function(e){
+                $(".commentsList").animate({ scrollTop: commentList.prop("scrollHeight") });
+            });
+
+        })
+
     })
 
     // Liking/Unliking an article
@@ -148,6 +183,48 @@ $(document).ready(function () {
     })
 
     // Adding a comment
+    $(document).on('keypress', "#comment-input", function (e) {
+        if (e.which === 13) {
+            var comment = {};
+            var content = $(this).val().trim();
+            comment.content = content;
+
+            //Disable textbox to prevent multiple submit
+            $(this).attr("disabled", "disabled");
+
+            // Submit comment and then load comments
+
+            $.ajax({
+                url: `/api/articles/${currCommentArticleID}/comments`,
+                type: "POST",
+                data: {
+                    comment: comment,
+                    userID: userToken
+                },
+                success: function () {
+                    $.get(`/api/articles/${currCommentArticleID}/comments`, function (comments) {
+                        $("#comment-input").val("");
+                        var commentList = $(".commentsList")
+                        commentList.empty();
+                        comments.forEach(function(comment){
+                            var commentPartial = Handlebars.templates.comment(comment);
+                            commentList.append(commentPartial);
+                        })
+                        commentList.animate({ scrollTop: commentList.prop("scrollHeight") });
+
+        
+                    });
+        
+                    //Enable the textbox again if needed.
+                    $("#comment-input").removeAttr("disabled");
+                    $("#sync-articles-btn").click();
+
+                }
+            })
+
+
+        }
+    });
 
     // Add/Remove a bookmark
     $(document).on("click", ".bookmark-btn", function () {
@@ -195,4 +272,3 @@ $(document).ready(function () {
     // Load the first page option
     $("#sync-articles-btn").click();
 })
-

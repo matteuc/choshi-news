@@ -8,10 +8,12 @@
     height: 60px;
     background-color: var(--main-nav-color);
 }
+
 .navbar-brand {
     position: absolute;
     left: 50%;
-    margin-left: -60px !important;  /* 50% of your logo width */
+    margin-left: -60px !important;
+    /* 50% of your logo width */
     display: block;
     padding-top: 0
 }
@@ -42,9 +44,33 @@
     font-size: 1.2em;
 }
 
-#login-btn, .action-btn, #view-saved-btn {
+#login-btn,
+.action-btn,
+#view-saved-btn {
     margin-top: -5px;
     color: white;
+
+}
+
+#view-saved-btn:hover i 
+ {
+    transform: scale(1.20); 
+
+}
+
+#action-btns-container i:hover {
+    transform: scale(1.20); 
+
+}
+
+#action-btns-container i {
+    transition: all .2s ease-in-out;
+
+}
+
+#view-saved-btn i {
+    transition: all .2s ease-in-out;
+
 }
 
 #view-saved-btn {
@@ -54,30 +80,42 @@
 
 #view-saved-btn:hover {
     color: rgb(250, 75, 75);
+    text-shadow: rgb(250, 75, 75) 1px 0 10px;
+
 }
 
-#login-btn:hover, .action-btn:hover {
-    color: rgb(228, 243, 162);
+#login-btn:hover, #logout-btn:hover{
+    color: rgb(190, 190, 190);
+    text-shadow: rgb(190, 190, 190) 1px 0 10px;
 }
+
+#channel-switch-btn:hover {
+    color: rgb(252, 213, 86);
+    text-shadow: rgb(252, 213, 86) 1px 0 10px;
+}
+
+#info-btn:hover {
+    color: rgb(71, 238, 250);
+    text-shadow: rgb(71, 238, 250) 1px 0 10px;
+}
+
 
 .inset {
     width: 32px;
     height: 32px;
     border-radius: 50%;
     box-shadow:
-      inset 0 0 0 2px rgba(255,255,255,0.6), 
-      0 1px 1px rgba(0,0,0,0.1);
+        inset 0 0 0 2px rgba(255, 255, 255, 0.6),
+        0 1px 1px rgba(0, 0, 0, 0.1);
     background-color: transparent !important;
-    z-index: 999;
-  }
-  
-  .inset img {
+    z-index: 500;
+}
+
+.inset img {
     border-radius: inherit;
     width: inherit;
     height: inherit;
     display: block;
     position: relative;
-    z-index: 998;
-  }
-
-  
+    z-index: 499;
+}
