@@ -93,7 +93,7 @@ background-size: cover;
 
   #channel-articles {
       margin-top: 200px;
-      /* height: 100vh; */
+      min-height: 100vh;
   }
 
 .grow { 
