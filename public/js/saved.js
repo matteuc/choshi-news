@@ -155,7 +155,7 @@ $(document).ready(function () {
             },
             success: function () {
                 //    Remove bookmarked article from page
-                numArticles--;
+                // numArticles--;
                 // if (numArticles <= 2) {
                 //     $("#saved-articles").css("height", "100vh");
                 // }
