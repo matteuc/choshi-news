@@ -124,7 +124,7 @@ $(document).ready(function () {
             })
 
             commentViewModal.on('shown.bs.modal', function(e){
-                $(".commentsList").animate({ scrollTop: commentList.prop("scrollHeight") });
+                $(".commentsList").animate({ scrollTop: $(".commentsList").prop("scrollHeight") });
             });
 
         })
