@@ -92,7 +92,7 @@ module.exports = function (app) {
             // First create articles
             var articleIDs = [];
             var bulk = db.Article.collection.initializeOrderedBulkOp();
-            articles.forEach(function (article) {
+            articles.reverse().forEach(function (article) {
                 // Correcting for sources that use relative links
                 if (article.title && article.url) {
                     if (!article.url.includes("http")) {
