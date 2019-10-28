@@ -99,6 +99,10 @@ module.exports = function (app) {
                         article.url = `${pageURL.split(".com")[0]}.com${article.url}`
 
                     }
+
+                    if(article.timestamp) {
+                        article.timestamp = moment(article.timestamp).format('dddd, MMMM Do YYYY')
+                    }
                     bulk.find({
                         url: article.url
                     }).upsert().updateOne({
