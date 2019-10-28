@@ -12,6 +12,11 @@
     cursor: pointer; /* Add a pointer on hover */
   }
 
+#channel-icons {
+  overflow: auto;
+  height: 90%;
+}
+
   .close-overlay-btn {
     color: white;
     position: absolute;
