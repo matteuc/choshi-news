@@ -67,7 +67,6 @@ module.exports = function (app) {
                                 if (structure[key].container) {
                                     var value;
                                     var valueContainer = $(element).find(structure[key].container);
-
                                     if (structure[key].text) {
                                         value = valueContainer.text();
                                     } else if (structure[key].attr.length != 0) {
@@ -75,7 +74,7 @@ module.exports = function (app) {
                                     } else {
                                         value = "";
                                     }
-
+                                                                
                                     article[key] = value;
                                 }
                             }
@@ -106,6 +105,8 @@ module.exports = function (app) {
                         $set: {
                             url: article.url,
                             title: article.title,
+                            author: article.author,
+                            timestamp: article.timestamp,
                             description: article.description,
                             image: article.image
                         }
