@@ -26,12 +26,21 @@ header.masthead {
     header.masthead {
       padding-top: 6rem;
       padding-bottom: 12rem;
+
     }
     header.masthead h1 {
       font-size: 3rem;
     }
   }
 
+  @media (max-width: 768px) {
+    header.masthead {
+      
+      height: 120vh;
+
+    }
+
+  }
   #user-img {
     width: 200px;
     height: 200px;
