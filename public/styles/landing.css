@@ -142,9 +142,3 @@ header.masthead {
     top: 6px;
   }
 
-  @media (max-width: 500px) {
-
-    .article-card .text-muted {
-      font-size: 0.7em;
-    }
-}
