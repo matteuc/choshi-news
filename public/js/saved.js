@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    var numArticles = 0;
+    // var numArticles = 0;
     var savedArticles = $("#saved-articles");
     var userToken = $("#user-token").attr("data-token");
 
@@ -48,10 +48,10 @@ $(document).ready(function () {
             }
             // Render articles
             if (articles.length) {
-                numArticles = articles.length;
-                if (numArticles > 2) {
-                    $("#saved-articles").css("height", "auto");
-                }
+                // numArticles = articles.length;
+                // if (numArticles > 2) {
+                //     $("#saved-articles").css("height", "auto");
+                // }
                 renderArticles(articles);
             }
         })
@@ -156,9 +156,9 @@ $(document).ready(function () {
             success: function () {
                 //    Remove bookmarked article from page
                 numArticles--;
-                if (numArticles <= 2) {
-                    $("#saved-articles").css("height", "100vh");
-                }
+                // if (numArticles <= 2) {
+                //     $("#saved-articles").css("height", "100vh");
+                // }
                 btn.addClass("far");
                 btn.removeClass("fas");
                 text.text("save");

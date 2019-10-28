@@ -73,7 +73,7 @@ header.saved-masthead h1 {
 
 #saved-articles {
     margin-top: 150px;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 .grow { 
